@@ -86,7 +86,7 @@ my_dfm <- undergrad(
   numericization_method = "transformer_based",
   textEmbed_control = list(model = models["roberta"],
                            layers = -1L,
-                           tokenizer_parallelism	= TRUE,
+                           tokenizer_parallelism = TRUE,
                            device = "cpu")
 )
 
@@ -96,7 +96,7 @@ my_dfm[1:10,1:10]
 
 saveRDS(my_dfm, "my_dfm.rds")
 
-## WORD VECTOR SUMMARIES #######################################################
+## PROPORTION ESTIMATION #######################################################
 
 nProj <- 50L
 
