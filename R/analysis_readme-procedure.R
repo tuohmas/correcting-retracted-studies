@@ -100,6 +100,8 @@ saveRDS(my_dfm, "my_dfm.rds")
 
 nProj <- 50L
 
+set.seed(987654321)
+
 # Perform estimation
 readme_results <- readme(
   dfm = my_dfm,                       # Result from undergrad()
