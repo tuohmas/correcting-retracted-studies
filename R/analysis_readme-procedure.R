@@ -11,26 +11,24 @@ rm(list = ls())
 # Suppress scientific notation
 options(scipen = 999)
 
-### install packages not listed in CRAN:
-remotes::install_github("rstudio/tensorflow", upgrade = "never")
-remotes::install_github("iqss-research/readme-software/readme", upgrade = "never")
-install.packages("pacman")
+# Install packages
+if(!require("tensorflow")) {
+  remotes::install_github("rstudio/tensorflow", upgrade = "never") }
+
+if(!require("readme")) {
+remotes::install_github("iqss-research/readme-software/readme",
+                        upgrade = "never") }
+
+if(!require("pacman")) {
+  install.packages("pacman") }
 
 # Load other packages
 pacman::p_load(dplyr,
                tidyr,
-               readr,
-               stringr,
-               purrr,
-               dtplyr,
-               tidytext,
-               textstem,
                reticulate,
                tensorflow,
-               readme,
                text,
-               httr2,
-               polite)
+               readme)
 
 # Unset Environment variable RETICULATE_PYTHON, if one exists
 if(nchar(Sys.getenv("RETICULATE_PYTHON")) > 0) {
@@ -60,8 +58,9 @@ virtualenv_install(envname, packages)
 # Testing whether TensorFlow is working
 tensorflow::tf$constant("Hello world")
 
+# Initialize text package
 textrpp_initialize(virtualenv = py_config()$pythonhome, refresh_settings = TRUE,
-                   save_profile = FALSE, textEmbed_test = TRUE, check_env = TRUE)
+                   save_profile = FALSE, textEmbed_test=TRUE, check_env=TRUE)
 
 ## WORD VECTOR SUMMARIES #######################################################
 
@@ -81,15 +80,17 @@ models <- c("bert" = "google-bert/bert-large-cased-whole-word-masking",
 
 set.seed(987654321)
 
-# Generate a word vector summary for first 500 document
+# Generate a word vector summary for first 500 documents
 my_dfm <- undergrad(
   documentText = tolower(my_data$TEXT),
   numericization_method = "transformer_based",
   textEmbed_control = list(model = models["roberta"],
                            layers = -1L,
                            tokenizer_parallelism	= TRUE,
-                           device = "gpu")
+                           device = "cpu")
 )
+
+
 
 my_dfm[1:10,1:10]
 
@@ -99,13 +100,11 @@ saveRDS(my_dfm, "my_dfm.rds")
 
 nProj <- 50L
 
-start_time_bert <- Sys.time()
-
 # Perform estimation
 readme_results <- readme(
   dfm = my_dfm,                       # Result from undergrad()
-  labeledIndicator = training_set,
-  categoryVec = labels,
+  labeledIndicator = my_data$TRAININGSET,
+  categoryVec = my_data$TRUTH,
   nBoot = 100,
   numProjections = 50,
   sgdIters = 750,
