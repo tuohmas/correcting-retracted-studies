@@ -1,2 +1,2 @@
-# correcting-retracted-studies
-retracted-studies Data wrangling and data analysis for conversations about retracted COVID-19 studies
+# Correcting studies from scientific sources
+Code for data collection, wrangling and analysis for conversations about retracted COVID-19 studies
